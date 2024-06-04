@@ -1,0 +1,5 @@
+name: quarkus-tdc
+title: Quarkus Tdc
+version: dev
+nav:
+  - modules/ROOT/nav.adoc
