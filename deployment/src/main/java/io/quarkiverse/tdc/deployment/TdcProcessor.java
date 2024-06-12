@@ -26,44 +26,39 @@ class TdcProcessor {
     }
 
     @BuildStep
-    CardPageBuildItem devUI(List<ProblemBuildItem> problems) {
+    CardPageBuildItem devUI(List<ErrorBuildItem> errors) {
 
         CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
-        cardPageBuildItem.addBuildTimeData("problems", problems);
+        cardPageBuildItem.addBuildTimeData("errors", errors);
 
         cardPageBuildItem
                 .addPage(Page.tableDataPageBuilder("REST errors").showColumn("message")
                         .showColumn("className")
                         .showColumn("methodName")
-                        .buildTimeDataKey("problems")
-                        .icon("font-awesome-solid:file-code").staticLabel(String.valueOf(problems.size())));
-
+                        .buildTimeDataKey("errors")
+                        .icon("font-awesome-solid:file-code").staticLabel(String.valueOf(errors.size())));
         return cardPageBuildItem;
-
     }
 
     @BuildStep
-    void rest(ApplicationIndexBuildItem index, BuildProducer<ProblemBuildItem> errorProducer) {
+    void verifyBodyOnGet(ApplicationIndexBuildItem index, BuildProducer<ErrorBuildItem> errors) {
 
         Index jandex = index.getIndex();
         List<AnnotationInstance> annotations = jandex.getAnnotations(DotName.createSimple("jakarta.ws.rs.GET"));
 
         for (AnnotationInstance annotation : annotations) {
-            AnnotationTarget target = annotation.target();
+            MethodInfo methodInfo = annotation.target().asMethod();
 
-            MethodInfo asMethod = target.asMethod();
-
-            List<MethodParameterInfo> parameters = asMethod.parameters();
+            List<MethodParameterInfo> parameters = methodInfo.parameters();
 
             for (MethodParameterInfo param : parameters) {
 
                 boolean isEmpty = param.annotations().isEmpty();
-
                 if (isEmpty) {
-                    errorProducer.produce(
-                            new ProblemBuildItem("Você não deve adicionar corpo na requisição utilizando método GET",
-                                    target.asMethod().declaringClass().simpleName(),
-                                    target.asMethod().name()));
+                    errors.produce(
+                            new ErrorBuildItem("Are you using REST? You should use @QueryParam, @PathParam or @Context",
+                                    methodInfo.declaringClass().name().toString(),
+                                    methodInfo.name()));
                 }
             }
         }
