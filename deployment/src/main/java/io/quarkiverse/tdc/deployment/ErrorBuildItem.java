@@ -2,13 +2,13 @@ package io.quarkiverse.tdc.deployment;
 
 import io.quarkus.builder.item.MultiBuildItem;
 
-public final class ProblemBuildItem extends MultiBuildItem {
+public final class ErrorBuildItem extends MultiBuildItem {
 
     private final String message;
     private final String methodName;
     private final String className;
 
-    public ProblemBuildItem(String message, String className, String methodName) {
+    public ErrorBuildItem(String message, String className, String methodName) {
         this.message = message;
         this.className = className;
         this.methodName = methodName;

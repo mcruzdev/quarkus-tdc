@@ -3,7 +3,6 @@ package io.quarkiverse.tdc.deployment;
 import java.util.List;
 
 import org.jboss.jandex.AnnotationInstance;
-import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.MethodInfo;
